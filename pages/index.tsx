@@ -78,6 +78,7 @@ const Index = ({ apiKey, prefectures }: PageProps) => {
   return (
     <>
       <main className={styles.mainContainer}>
+        <h4>都道府県</h4>
         <div className={styles.checkboxContainer}>
           {prefectures.map((pre) => (
             <label>
@@ -90,8 +91,13 @@ const Index = ({ apiKey, prefectures }: PageProps) => {
             </label>
           ))}
         </div>
+        <h4>人口推移</h4>
         <div className={styles.chartContainer}>
-          <StractureChart prefectures={checkedPrefectures} />
+          {checkedPrefectures.length ? (
+            <StractureChart prefectures={checkedPrefectures} />
+          ) : (
+            <p>都道府県を選択してください．</p>
+          )}
         </div>
       </main>
     </>

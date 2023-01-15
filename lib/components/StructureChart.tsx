@@ -9,8 +9,6 @@ type Props = {
 Chart.register();
 
 const StractureChart = ({ prefectures }: Props) => {
-  if (!prefectures.length) return null;
-
   const plotData = {
     labels: prefectures[0].population.data[0].data.map(({ year }) => year),
     datasets: prefectures.map((el) => ({
