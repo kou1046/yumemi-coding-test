@@ -1,7 +1,9 @@
-import NamedCheckBox from "@/lib/components/NamedCheckBox";
-import { Prefecture, ResasAPI } from "@/lib/types/resas";
-import axios from "axios";
+import React from "react";
 import { GetStaticProps } from "next";
+import axios from "axios";
+
+import { Prefecture, ResasAPI } from "@/lib/types/resas";
+import styles from "@/styles/index.module.css";
 import { useState } from "react";
 import prefectures from "./../public/prefectures.json";
 
@@ -29,17 +31,40 @@ export const getStaticProps: GetStaticProps<PageProps> = async (ctx) => {
 };
 
 const Index = ({ apiKey, prefectures }: PageProps) => {
-  const [selectedPrefectures, setSelectedPrefectures] = useState<
+  const [checkedPrefectures, setcheckedPrefectures] = useState<
     Array<Prefecture>
   >([]);
 
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const clickedPrefecture = prefectures.filter(
+      ({ prefName }) => prefName === e.target.value
+    )[0];
+
+    if (e.target.checked) {
+      setcheckedPrefectures((prev) => [...prev, clickedPrefecture]);
+    } else {
+      setcheckedPrefectures((prev) =>
+        prev.filter((pre) => pre !== clickedPrefecture)
+      );
+    }
+  };
+
   return (
     <>
-      <div>
-        {prefectures.map((pre) => (
-          <NamedCheckBox label={pre.prefName}></NamedCheckBox>
-        ))}
-      </div>
+      <main className={styles.mainContainer}>
+        <div className={styles.checkboxContainer}>
+          {prefectures.map((pre) => (
+            <label>
+              <input
+                type="checkbox"
+                value={pre.prefName}
+                onChange={handleChange}
+              />
+              {pre.prefName}
+            </label>
+          ))}
+        </div>
+      </main>
     </>
   );
 };

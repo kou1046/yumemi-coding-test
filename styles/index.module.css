@@ -1,0 +1,17 @@
+.mainContainer {
+  display: "flex";
+  flex-direction: column;
+  justify-items: center;
+  justify-content: center;
+}
+
+.checkboxContainer {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+@media (min-width: 640px) {
+  .checkboxContainer {
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+  }
+}
