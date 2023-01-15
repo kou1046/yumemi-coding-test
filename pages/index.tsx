@@ -7,7 +7,9 @@ import {
   PrefectureWithPopulation,
   ResasAPI,
 } from "@/lib/types/resas";
+
 import styles from "@/styles/index.module.css";
+import StractureChart from "@/lib/components/StructureChart";
 import prefectures from "./../public/prefectures.json";
 
 type PageProps = {
@@ -88,6 +90,7 @@ const Index = ({ apiKey, prefectures }: PageProps) => {
             </label>
           ))}
         </div>
+        <StractureChart prefectures={checkedPrefectures} />
       </main>
     </>
   );

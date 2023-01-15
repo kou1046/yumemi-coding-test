@@ -11,14 +11,14 @@ export type Prefecture = {
 export type PopulationStructure = {
   // 人口構成
   boundaryYear: number;
-  data: {
+  data: Array<{
     label: string;
     data: Array<{
       year: number;
       value: number;
       rate?: number;
     }>;
-  };
+  }>;
 };
 
 export type PrefectureWithPopulation = {
