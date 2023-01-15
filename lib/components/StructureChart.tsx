@@ -19,8 +19,35 @@ const StractureChart = ({ prefectures }: Props) => {
     })),
   };
 
-  const options = {
+  const options: any = {
     maintainAspectRatio: false,
+    plugins: {
+      colors: {
+        forceOverride: true,
+      },
+    },
+    scales: {
+      x: {
+        ticks: {
+          color: "black",
+        },
+        title: {
+          display: true,
+          text: "Year",
+          color: "black",
+        },
+      },
+      y: {
+        ticks: {
+          color: "black",
+        },
+        title: {
+          display: true,
+          text: "Total population",
+          color: "black",
+        },
+      },
+    },
   };
 
   return <Line data={plotData} options={options}></Line>;
