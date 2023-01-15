@@ -1,10 +1,13 @@
-import React from "react";
+import React, { useState, useCallback } from "react";
 import { GetStaticProps } from "next";
 import axios from "axios";
-
-import { Prefecture, ResasAPI } from "@/lib/types/resas";
+import {
+  PopulationStructure,
+  Prefecture,
+  PrefectureWithPopulation,
+  ResasAPI,
+} from "@/lib/types/resas";
 import styles from "@/styles/index.module.css";
-import { useState } from "react";
 import prefectures from "./../public/prefectures.json";
 
 type PageProps = {
@@ -32,19 +35,40 @@ export const getStaticProps: GetStaticProps<PageProps> = async (ctx) => {
 
 const Index = ({ apiKey, prefectures }: PageProps) => {
   const [checkedPrefectures, setcheckedPrefectures] = useState<
-    Array<Prefecture>
+    Array<PrefectureWithPopulation>
   >([]);
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const clickedPrefecture = prefectures.filter(
       ({ prefName }) => prefName === e.target.value
     )[0];
 
     if (e.target.checked) {
-      setcheckedPrefectures((prev) => [...prev, clickedPrefecture]);
+      const res = await axios.get<ResasAPI<PopulationStructure>>(
+        "https://opendata.resas-portal.go.jp/api/v1/population/composition/perYear",
+
+        {
+          headers: {
+            "X-API-KEY": apiKey,
+          },
+          params: {
+            prefCode: clickedPrefecture.prefCode,
+            cityCode: "-",
+          },
+        }
+      );
+
+      const data: PrefectureWithPopulation = {
+        prefecture: clickedPrefecture,
+        population: res.data.result,
+      };
+
+      setcheckedPrefectures((prev) => [...prev, data]);
     } else {
       setcheckedPrefectures((prev) =>
-        prev.filter((pre) => pre !== clickedPrefecture)
+        prev.filter(
+          (el) => el.prefecture.prefName !== clickedPrefecture.prefName
+        )
       );
     }
   };

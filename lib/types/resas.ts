@@ -1,6 +1,6 @@
 export type ResasAPI<T> = {
   message: string;
-  result: Array<T>;
+  result: T;
 };
 
 export type Prefecture = {
@@ -19,4 +19,9 @@ export type PopulationStructure = {
       rate?: number;
     }>;
   };
+};
+
+export type PrefectureWithPopulation = {
+  prefecture: Prefecture;
+  population: PopulationStructure;
 };
