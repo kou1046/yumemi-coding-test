@@ -33,7 +33,7 @@ const StractureChart = ({ prefectures }: Props) => {
         },
         title: {
           display: true,
-          text: "Year",
+          text: "時間 (年)",
           color: "black",
         },
       },
@@ -43,7 +43,7 @@ const StractureChart = ({ prefectures }: Props) => {
         },
         title: {
           display: true,
-          text: "Total population",
+          text: "総人口 (人)",
           color: "black",
         },
       },
