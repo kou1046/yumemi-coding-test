@@ -10,7 +10,6 @@ import {
 
 import styles from "@/styles/index.module.css";
 import StractureChart from "@/lib/components/StructureChart";
-import prefectures from "./../public/prefectures.json";
 
 type PageProps = {
   apiKey: string;
@@ -25,12 +24,14 @@ export const getStaticProps: GetStaticProps<PageProps> = async (ctx) => {
       "X-API-KEY": apiKey,
     },
   });
-  // const res = await fetcher.get<ResasAPI<Prefecture>>("/api/v1/prefectures");
+  const res = await fetcher.get<ResasAPI<Array<Prefecture>>>(
+    "/api/v1/prefectures"
+  );
 
   return {
     props: {
       apiKey,
-      prefectures: prefectures,
+      prefectures: res.data.result,
     },
   };
 };
@@ -46,6 +47,7 @@ const Index = ({ apiKey, prefectures }: PageProps) => {
     )[0];
 
     if (e.target.checked) {
+      //チェックマークをつけたとき，対象のデータを取得する
       const res = await axios.get<ResasAPI<PopulationStructure>>(
         "https://opendata.resas-portal.go.jp/api/v1/population/composition/perYear",
 
@@ -67,6 +69,7 @@ const Index = ({ apiKey, prefectures }: PageProps) => {
 
       setcheckedPrefectures((prev) => [...prev, data]);
     } else {
+      //外した時は配列から除外する
       setcheckedPrefectures((prev) =>
         prev.filter(
           (el) => el.prefecture.prefName !== clickedPrefecture.prefName
@@ -77,29 +80,30 @@ const Index = ({ apiKey, prefectures }: PageProps) => {
 
   return (
     <>
-      <main className={styles.mainContainer}>
-        <h4>都道府県</h4>
-        <div className={styles.checkboxContainer}>
-          {prefectures.map((pre) => (
-            <label>
-              <input
-                type="checkbox"
-                value={pre.prefName}
-                onChange={handleChange}
-              />
-              {pre.prefName}
-            </label>
-          ))}
-        </div>
-        <h4>人口推移</h4>
-        <div className={styles.chartContainer}>
-          {checkedPrefectures.length ? (
-            <StractureChart prefectures={checkedPrefectures} />
-          ) : (
-            <p>都道府県を選択してください．</p>
-          )}
-        </div>
-      </main>
+      <div className={styles.title}>
+        <h2>都道府県別総人口推移</h2>
+      </div>
+      <h4>都道府県</h4>
+      <div className={styles.checkboxContainer}>
+        {prefectures.map((pre) => (
+          <label>
+            <input
+              type="checkbox"
+              value={pre.prefName}
+              onChange={handleChange}
+            />
+            {pre.prefName}
+          </label>
+        ))}
+      </div>
+      <h4>人口推移</h4>
+      <div className={styles.chartContainer}>
+        {checkedPrefectures.length ? (
+          <StractureChart prefectures={checkedPrefectures} />
+        ) : (
+          <p>都道府県を選択してください．</p>
+        )}
+      </div>
     </>
   );
 };

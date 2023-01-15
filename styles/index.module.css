@@ -1,10 +1,7 @@
-.mainContainer {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  height: 100%;
-  width: 80%;
-  margin: 0 auto;
+.title {
+  text-align: center;
+  background-color: lightgray;
+  padding: 1em;
 }
 
 .checkboxContainer {
@@ -18,11 +15,18 @@
 .chartContainer {
   min-height: 300px;
   text-align: center;
+  overflow: auto;
 }
 
 @media (min-width: 320px) {
   .checkboxContainer {
     grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+@media (min-width: 470px) {
+  .checkboxContainer {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
   }
 }
 

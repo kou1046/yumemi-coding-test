@@ -14,6 +14,8 @@ const StractureChart = ({ prefectures }: Props) => {
     datasets: prefectures.map((el) => ({
       label: el.prefecture.prefName,
       data: el.population.data[0].data.map(({ value }) => value),
+      borderWidth: 1.5,
+      pointRadius: 1.5,
     })),
   };
 
