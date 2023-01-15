@@ -90,7 +90,9 @@ const Index = ({ apiKey, prefectures }: PageProps) => {
             </label>
           ))}
         </div>
-        <StractureChart prefectures={checkedPrefectures} />
+        <div className={styles.chartContainer}>
+          <StractureChart prefectures={checkedPrefectures} />
+        </div>
       </main>
     </>
   );

@@ -19,9 +19,11 @@ const StractureChart = ({ prefectures }: Props) => {
     })),
   };
 
-  console.log(plotData);
+  const options = {
+    maintainAspectRatio: false,
+  };
 
-  return <Line data={plotData}></Line>;
+  return <Line data={plotData} options={options}></Line>;
 };
 
 export default StractureChart;
