@@ -1,5 +1,7 @@
 import { fetchPopulation, fetchPrefectures } from "../utils/api";
 
+require("dotenv").config({ path: ".env.local" });
+
 describe("API test", () => {
   test("prefectures test", async () => {
     const prefectures = await fetchPrefectures(process.env.API_KEY as string);
