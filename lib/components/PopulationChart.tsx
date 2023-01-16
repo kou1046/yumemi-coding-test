@@ -8,17 +8,7 @@ type Props = {
 
 Chart.register();
 
-const StractureChart = ({ prefectures }: Props) => {
-  const plotData = {
-    labels: prefectures[0].population.data[0].data.map(({ year }) => year),
-    datasets: prefectures.map((el) => ({
-      label: el.prefecture.prefName,
-      data: el.population.data[0].data.map(({ value }) => value),
-      borderWidth: 1.5,
-      pointRadius: 1.5,
-    })),
-  };
-
+const PopulationChart = ({ prefectures }: Props) => {
   const options: any = {
     maintainAspectRatio: false,
     plugins: {
@@ -50,7 +40,25 @@ const StractureChart = ({ prefectures }: Props) => {
     },
   };
 
+  if (!prefectures.length) {
+    const plotData = {
+      labels: [],
+      datasets: [],
+    };
+    return <Line data={plotData} options={options} />;
+  }
+
+  const plotData = {
+    labels: prefectures[0].population.data[0].data.map(({ year }) => year),
+    datasets: prefectures.map((el) => ({
+      label: el.prefecture.prefName,
+      data: el.population.data[0].data.map(({ value }) => value),
+      borderWidth: 1.5,
+      pointRadius: 1.5,
+    })),
+  };
+
   return <Line data={plotData} options={options}></Line>;
 };
 
-export default StractureChart;
+export default PopulationChart;

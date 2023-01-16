@@ -1,16 +1,9 @@
-import React, { useState, useCallback } from "react";
 import { GetStaticProps } from "next";
-import axios from "axios";
+import React, { useState } from "react";
+import PopulationChart from "@/lib/components/PopulationChart";
+import { Prefecture, PrefectureWithPopulation } from "@/lib/types/resas";
 import { fetchPopulation, fetchPrefectures } from "@/lib/utils/api";
-import {
-  PopulationStructure,
-  Prefecture,
-  PrefectureWithPopulation,
-  ResasAPI,
-} from "@/lib/types/resas";
-
 import styles from "@/styles/index.module.css";
-import StractureChart from "@/lib/components/StructureChart";
 
 type PageProps = {
   apiKey: string;
@@ -29,21 +22,14 @@ export const getStaticProps: GetStaticProps<PageProps> = async (ctx) => {
 };
 
 const Index = ({ apiKey, prefectures }: PageProps) => {
-  const [checkedPrefectures, setcheckedPrefectures] = useState<
-    Array<PrefectureWithPopulation>
-  >([]);
+  const [checkedPrefectures, setcheckedPrefectures] = useState<Array<PrefectureWithPopulation>>([]);
 
   const handleChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const clickedPrefecture = prefectures.filter(
-      ({ prefName }) => prefName === e.target.value
-    )[0];
+    const clickedPrefecture = prefectures.filter(({ prefName }) => prefName === e.target.value)[0];
 
     if (e.target.checked) {
       //チェックマークをつけたとき，対象の人口データを取得する
-      const population = await fetchPopulation(
-        apiKey,
-        clickedPrefecture.prefCode
-      );
+      const population = await fetchPopulation(apiKey, clickedPrefecture.prefCode);
 
       const data: PrefectureWithPopulation = {
         prefecture: clickedPrefecture,
@@ -54,9 +40,7 @@ const Index = ({ apiKey, prefectures }: PageProps) => {
     } else {
       //外した時は配列から除外する
       setcheckedPrefectures((prev) =>
-        prev.filter(
-          (el) => el.prefecture.prefName !== clickedPrefecture.prefName
-        )
+        prev.filter((el) => el.prefecture.prefName !== clickedPrefecture.prefName),
       );
     }
   };
@@ -70,22 +54,14 @@ const Index = ({ apiKey, prefectures }: PageProps) => {
       <div className={styles.checkboxContainer}>
         {prefectures.map((pre) => (
           <label key={pre.prefName}>
-            <input
-              type="checkbox"
-              value={pre.prefName}
-              onChange={handleChange}
-            />
+            <input type="checkbox" value={pre.prefName} onChange={handleChange} />
             {pre.prefName}
           </label>
         ))}
       </div>
       <h4>人口推移</h4>
       <div className={styles.chartContainer}>
-        {checkedPrefectures.length ? (
-          <StractureChart prefectures={checkedPrefectures} />
-        ) : (
-          <p>都道府県を選択してください．</p>
-        )}
+        <PopulationChart prefectures={checkedPrefectures} />
       </div>
     </>
   );
