@@ -1,6 +1,7 @@
+import dotenv from "dotenv";
 import { fetchPopulation, fetchPrefectures } from "../utils/api";
 
-require("dotenv").config({ path: ".env.local" });
+const config = dotenv.config({ path: ".env.local" }).parsed;
 
 describe("API test", () => {
   test("prefectures test", async () => {
