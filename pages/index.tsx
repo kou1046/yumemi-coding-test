@@ -1,6 +1,7 @@
 import React, { useState, useCallback } from "react";
 import { GetStaticProps } from "next";
 import axios from "axios";
+import { fetchPopulation, fetchPrefectures } from "@/lib/utils/api";
 import {
   PopulationStructure,
   Prefecture,
@@ -18,20 +19,11 @@ type PageProps = {
 
 export const getStaticProps: GetStaticProps<PageProps> = async (ctx) => {
   const apiKey = process.env.API_KEY as string;
-  const fetcher = axios.create({
-    baseURL: "https://opendata.resas-portal.go.jp",
-    headers: {
-      "X-API-KEY": apiKey,
-    },
-  });
-  const res = await fetcher.get<ResasAPI<Array<Prefecture>>>(
-    "/api/v1/prefectures"
-  );
-
+  const prefectures = await fetchPrefectures(apiKey);
   return {
     props: {
       apiKey,
-      prefectures: res.data.result,
+      prefectures,
     },
   };
 };
@@ -47,24 +39,15 @@ const Index = ({ apiKey, prefectures }: PageProps) => {
     )[0];
 
     if (e.target.checked) {
-      //チェックマークをつけたとき，対象のデータを取得する
-      const res = await axios.get<ResasAPI<PopulationStructure>>(
-        "https://opendata.resas-portal.go.jp/api/v1/population/composition/perYear",
-
-        {
-          headers: {
-            "X-API-KEY": apiKey,
-          },
-          params: {
-            prefCode: clickedPrefecture.prefCode,
-            cityCode: "-",
-          },
-        }
+      //チェックマークをつけたとき，対象の人口データを取得する
+      const population = await fetchPopulation(
+        apiKey,
+        clickedPrefecture.prefCode
       );
 
       const data: PrefectureWithPopulation = {
         prefecture: clickedPrefecture,
-        population: res.data.result,
+        population: population,
       };
 
       setcheckedPrefectures((prev) => [...prev, data]);
@@ -86,7 +69,7 @@ const Index = ({ apiKey, prefectures }: PageProps) => {
       <h4>都道府県</h4>
       <div className={styles.checkboxContainer}>
         {prefectures.map((pre) => (
-          <label>
+          <label key={pre.prefName}>
             <input
               type="checkbox"
               value={pre.prefName}
