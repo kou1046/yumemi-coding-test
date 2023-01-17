@@ -1,27 +1,29 @@
+import axios from "axios";
 import { GetStaticProps } from "next";
 import React, { useState } from "react";
 import PopulationChart from "@/lib/components/PopulationChart";
-import { Prefecture, PrefectureWithPopulation } from "@/lib/types/resas";
-import { fetchPopulation, fetchPrefectures } from "@/lib/utils/api";
+import {
+  PopulationStructure,
+  Prefecture,
+  PrefectureWithPopulation,
+  ResasAPI,
+} from "@/lib/types/resas";
 import styles from "@/styles/index.module.css";
 
 type PageProps = {
-  apiKey: string;
   prefectures: Array<Prefecture>;
 };
 
 export const getStaticProps: GetStaticProps<PageProps> = async (ctx) => {
-  const apiKey = process.env.API_KEY as string;
-  const prefectures = await fetchPrefectures(apiKey);
+  const res = await axios.get<ResasAPI<Array<Prefecture>>>(`${process.env.HOST}/api/prefectures`);
   return {
     props: {
-      apiKey,
-      prefectures,
+      prefectures: res.data.result,
     },
   };
 };
 
-const Index = ({ apiKey, prefectures }: PageProps) => {
+const Index = ({ prefectures }: PageProps) => {
   const [checkedPrefectures, setcheckedPrefectures] = useState<Array<PrefectureWithPopulation>>([]);
 
   const handleChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -29,11 +31,13 @@ const Index = ({ apiKey, prefectures }: PageProps) => {
 
     if (e.target.checked) {
       //チェックマークをつけたとき，対象の人口データを取得する
-      const population = await fetchPopulation(apiKey, clickedPrefecture.prefCode);
+      const res = await axios.get<ResasAPI<PopulationStructure>>(
+        `/api/population/?prefCode=${clickedPrefecture.prefCode}`,
+      );
 
       const data: PrefectureWithPopulation = {
         prefecture: clickedPrefecture,
-        population: population,
+        population: res.data.result,
       };
 
       setcheckedPrefectures((prev) => [...prev, data]);
